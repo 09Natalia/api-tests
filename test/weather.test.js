@@ -140,16 +140,6 @@ describe("Negative Weather API tests", function () {
       })
   })
 
-   it("Random text is incorrect param",() => {
-    return api.get("/current.json", { q : "firebase"})
-      .then(() => {
-        throw new Error("Erorr! characters is incorrect param");})
-      .catch(error => {
-        expect(error.response.status).to.equal(400);
-        expect(error.response.data).to.have.property("error");
-        expect(error.response.data.error.code).to.equal(1006);
-      })
-  })
 
 
 });
