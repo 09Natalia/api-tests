@@ -107,6 +107,17 @@ describe("Negative Weather API tests", function () {
       });
   })
 
+  it("undefined is incorrect param", () => {
+    return api.get("/current.json", { q: undefined })
+      .then(() => {
+        throw new Error("Expected error for undefined q");})
+      .catch(error => {
+        expect(error.response.status).to.equal(400);
+        expect(error.response.data).to.have.property("error");
+        expect(error.response.data.error.code).to.equal(1003);
+      });
+  })
+
   it("Blank string is incorrect param",() => {
     return api.get("/current.json", { q : ""})
       .then(() => {
