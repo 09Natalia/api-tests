@@ -1,5 +1,6 @@
-const axios = require("axios");
-const { baseUrl, apiKey } = require("./config");
+
+import axios from "axios"; 
+import { baseUrl, apiKey } from "./config.js";
 
 class ApiService {
   constructor() {
@@ -16,4 +17,4 @@ class ApiService {
   }
 }
 
-module.exports = new ApiService();
+export default new ApiService();

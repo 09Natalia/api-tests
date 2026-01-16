@@ -1,5 +1,8 @@
-const { expect } = require("chai");
-const api = require("../service");
+import { expect } from "chai";
+import api from "../service.js";
+import { locationKeys, currentKeys } from "../consts.js";
+import { errorMessages } from "../errorMessages.js";
+
 
 describe("Positive Weather API tests", function () {
   //this.timeout(10000);
@@ -11,25 +14,8 @@ describe("Positive Weather API tests", function () {
     expect(result.data).to.have.property("current");
     expect(result.data.location.country).to.equal("Turkey");
     expect(result.data.location.tz_id).to.equal("Europe/Istanbul");
-    expect(result.data.location).to.include.all.keys([
-      "name",
-      "region",
-      "country",
-      "lat",
-      "lon",
-      "tz_id",
-      "localtime"
-    ]);
-    expect(result.data.current).to.include.keys([
-      "last_updated_epoch",
-      "last_updated",
-      "temp_c",
-      "temp_f",
-      "is_day",
-      "feelslike_c",
-      "feelslike_f",
-      "humidity",
-    ]);
+    expect(result.data.location).to.include.all.keys(locationKeys);
+    expect(result.data.current).to.include.keys(currentKeys);
 
   });
 
@@ -85,72 +71,72 @@ describe("Positive Weather API tests", function () {
 
 describe("Negative Weather API tests", function () {  
   
-  it("q param is required", () => {
-    return api.get("/current.json")
-      .then(() => {
-        throw new Error("Error! q param is required");})
-      .catch(emptyError => {
-        expect(emptyError.response.status).to.equal(400);
-        expect(emptyError.response.data).to.have.property("error");
-        expect(emptyError.response.data.error.code).to.equal(1003);
-      });
+  it("Param q is required", async() => {
+    try {
+      await api.get("/current.json");
+      throw new Error(errorMessages.emptyParamQ);
+    } catch (error) {
+      expect(error.response.status).to.equal(400);
+      expect(error.response.data).to.have.property("error");
+      expect(error.response.data.error.code).to.equal(1003)
+    }
   })
 
-  it("null is incorrect param", () => {
-    return api.get("/current.json", { q: null })
-      .then(() => {
-        throw new Error("Error! null is invalid param");})
-      .catch(error => {
+
+  it("Param null is incorrect", async() => {
+    try {
+      await api.get("/current.json", {q: null});
+      throw new Error(errorMessages.nullParamQ);
+    } catch(error) {
+      expect(error.response.status).to.equal(400);
+      expect(error.response.data).to.have.property("error");
+      expect(error.response.data.error.code).to.equal(1003);
+    } 
+  })
+
+  it("Param undefined is incorrect", async() => {
+    try{
+      await api.get("/current.json", { q: undefined });
+      throw new Error(errorMessages.undefinedParamQ);
+    } catch(error) {
         expect(error.response.status).to.equal(400);
         expect(error.response.data).to.have.property("error");
         expect(error.response.data.error.code).to.equal(1003);
-      });
+    }
   })
 
-  it("undefined is incorrect param", () => {
-    return api.get("/current.json", { q: undefined })
-      .then(() => {
-        throw new Error("Expected error for undefined q");})
-      .catch(error => {
-        expect(error.response.status).to.equal(400);
-        expect(error.response.data).to.have.property("error");
-        expect(error.response.data.error.code).to.equal(1003);
-      });
+  it("Blank string is incorrect param", async() => {
+    try{
+      await api.get("/current.json", {q: ""});
+      throw new Error(errorMessages.blankParamQ)
+    } catch(error){
+      expect(error.response.status).to.equal(400);
+      expect(error.response.data).to.have.property("error");
+      expect(error.response.data.error.code).to.equal(1003);
+    }
   })
 
-  it("Blank string is incorrect param",() => {
-    return api.get("/current.json", { q : ""})
-      .then(() => {
-        throw new Error("Erorr! Blank string is incorrect param");})
-      .catch(error => {
-        expect(error.response.status).to.equal(400);
-        expect(error.response.data).to.have.property("error");
-        expect(error.response.data.error.code).to.equal(1003);
-      })
-  })
-
-  it("Сharacters is incorrect param",() => {
-    return api.get("/current.json", { q : "` ~ @ #"})
-      .then(() => {
-        throw new Error("Erorr! characters is incorrect param");})
-      .catch(error => {
+  it("Сharacters are incorrect params", async() => {
+    try{
+      await api.get("/current.json", {q: "` ~ @ #"});
+      throw new Error(errorMessages.invalidCharsQ)
+    } catch(error) {
         expect(error.response.status).to.equal(400);
         expect(error.response.data).to.have.property("error");
         expect(error.response.data.error.code).to.equal(1006);
-      })
+    }
   })
 
-  it("Random text is incorrect param",() => {
-    return api.get("/current.json", { q : "firebase"})
-      .then(() => {
-        throw new Error("Erorr! characters is incorrect param");})
-      .catch(error => {
+  it("Random text is incorrect param", async() => {
+    try{
+      await api.get("/current.json", { q : "firebase"});
+      throw new Error(errorMessages.randomTextQ)
+    } catch(error) {
         expect(error.response.status).to.equal(400);
         expect(error.response.data).to.have.property("error");
         expect(error.response.data.error.code).to.equal(1006);
-      })
+    }
   })
-
 
 
 });
