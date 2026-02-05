@@ -3,7 +3,6 @@ import api from "../service.js";
 import { locationKeys, currentKeys } from "../consts.js";
 import { errorMessages } from "../errorMessages.js";
 
-
 describe("Positive Weather API tests", function () {
   //this.timeout(10000);
 
