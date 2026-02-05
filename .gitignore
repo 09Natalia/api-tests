@@ -1,13 +1,3 @@
-# Node.js dependencies
 node_modules/
-
-# Test reports
-mochawesome-report/
-
-# Logs
-*.log
-
-# OS-specific files
 .DS_Store
-Thumbs.db
-
+*.log
